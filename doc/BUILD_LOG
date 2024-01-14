@@ -1,0 +1,167 @@
+##############################################################################
+# Title:   OpenLFConnect
+# Author:  Jason Pruitt
+# Email:   jrspruitt@gmail.com
+# IRC:     #didj irc.freenode.org
+# Wiki:    http://elinux.org/LeapFrog_Pollux_Platform:_OpenLFConnect
+##############################################################################
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+OpenLFConnect is a Python and sg3_utils based replacement application for the LeapFrog LFConnect
+program. For Explorer and LeapPad it can use their dftpdevice to upload firmware. It also manages
+uploading the surgeon.cbf file for USB boot recovery mode and is capable of enabling sshd on both
+devices. For Didj it can mount the USB drive, copy firmware over, and send the eject command that
+will attempt to start flashing the firmware.
+
+WARNING: This program attempts to flash new firmware, has the ability to make and delete, upload
+and download, files could be destroyed, firmware flashing could go wrong. There is no prompts for
+second chances.
+
+Check OpenLFConnect/readme.md for install information
+
+
+Build Log:
+Version 1.0.5
+	Added upload/download progress with dftp2
+	Fix: double check for STOR command not returning response right away.
+	Added Command line history.
+
+Version 1.0.1
+    Fixed get board_id with new hardware, now deleted
+    Removed dftp_device_info call, see above issue
+    Fixed surgeon booting with surgeon.cbf files not 16384 aligned
+
+Version 1.0.0
+    Fixed LIST cut off in is_dir_i of dftp
+    Fixed dftp_info getting board type and thus device name wrong
+    Fixed dftp_info trying to list IP addresses for v2 firmware
+
+Version 0.9.0
+    Adding DFTP4 Functionality
+    Minor fixes
+    	initramfs.py GZIP sig works with v2 surgeon now
+        fixed dftp/2 device_name complaint int/str
+    Mount ubi changed for version 2 firmware, requires kernel 2.6.37+ hack though :(
+        perhaps later kernel support for chip as of 3.7 no
+
+Version 0.8.0
+    Fixed repopulation of files/ directory when started outside of application root.
+    Fixed Image mounts not check if path exists
+    Made Image mounts print mount path on mount
+    Added some is_empty checks for commands requiring arguments
+    Created a cfg file parser for figuring out the DFTP numbers
+    Tried to make entire app more friendly to starting outside root, can ln -s in usr/bin/ now
+
+Version 0.7.5
+    Added extract initramfs from Surgeon
+    Fixed package_download to work in current directory
+
+Version 0.7.4
+    Added Bulk_empty up/download for Lpad and Explorer
+    Fixed ubi_mount where it would only except erootfs
+    Fixed packages.py to use unused function for name checking
+    Added DIDJ Emerald Boot updating
+
+Version 0.7.3
+    Added path complete with 1 or 2 arguments ahead of it on the cli
+    Changed cbf/ubi/jffs2 create commands to utilize these and dropped erootfs from names
+    Fixed error with building LeapPad kernel kernel_jump/load wrong
+    Added ubi_create bulk, undetermined on adding to firmware update LF package is basically empty
+
+Version 0.7.2
+    Cleaned up dftp/didj firmware formatters
+    Fixed some help text.
+
+Version 0.7.1
+    Added jffs2/ubi erootfs mount/umount/create functions
+    Found issue with didj firmware, patched a bit for now
+
+Version 0.7
+    Reworked Firmware updates with some new automagic
+    Created olcmodules/config.py file for holding olc vars like device name
+    Added start up function to build files directory and copy scripts over
+
+Version 0.6.5
+	Centralized debug prints
+	changed debug_on debug_off to debug on|off was nearly exact same code for both
+	Minor clean up from sync issue
+	Cleaned up/download code, removed file_check,dir_check
+		each function_i deals with it again.
+		cleared out redundant checks
+	Added some nicer formating to ls, up/download
+
+Version 0.6.4
+	Finally got the sync/corruption issue figured on on Didj
+		Removed unmount, as corruption seemed almost a given using it.
+		Along with it having limited usage.
+	Changed upload/download to work with files or directories
+	Fixed regex bug in mount.py
+	Added regex to find_mount as no drive letter was causing issues.
+
+Version 0.6.3
+	Added modules for firmware handling
+	Added package download function
+	Changed local client to file sync on upload, prevents didj ejecting before cache is flushed. 
+	
+Version 0.6.2
+    Found the RUN command, which runs a shell script. Works much like upload RUN > data > 101 EOF
+    Removed enable ftp/sshd/telnet, rcS file is too important, should be done during Surgeon boot,
+        with patient rfs mounted.
+    Added Mount Patient 2 mounts rfs, 1 mounts bulk/rfs, 0 unmounts any.
+    Wrote some basic shell scripts for RUN, start|stop ftp/telnet/sshd/patch_sshd_config
+    Removed local path getting reset on remote_destroy()
+    Fixed reboot was missing \x00 from raw send and added reboot_usbmode.
+    
+Version 0.6.1
+	Changed dftp downloads/cat/uploads to have functions that up/downloads to/from a buffer
+	Changed from enable sshd to ftp and telnet, was an easier, more universal patch, requires no ssh
+	   program on Windows
+	Used d/upload buffer to change how enabling is done, d/l to buffer, change string, upload from
+	   buffer.
+	Renamed dftp_send to send, and made it a direct raw call and receive.
+
+Version 0.6
+	Added functions for wrapping and unwrapping CBF files
+	made a firmware module for CBF Packages, LX firmware functions
+	light code clean up, and bug fixes.
+
+Version 0.5
+	General code organization, testing, fixes.
+	Found issues with install dependencies, Windows requires Bonjour to be installed.
+	Removed anything not in standard python 2.6 install on Linux or Windows, afaik.
+	Changed is_connected to check eth or mount, ping was too slow.
+	Disconnected in session issues fairly well taken care of now.
+	Moved all the local/remote/path to locations.py.
+	Added package extractor.
+	Added LX firmware rename.
+	Added device info outputs.
+	
+Version 0.4
+	Changed is_connected() to actually ping the device
+	Added windows search for host IP, no need for default or static (1.25min wait though)
+		as it will default to a zeroconfig 169.254.x.x
+	Added some cmd do_<command> checks to prevent commands running if no meant to be.
+	Started a debug feature, for added output and test runs on updates, printing, instead of flashing
+	Added cat command for printing files to console
+	Determines name from board id, instead of firmware version now
+
+
+Version 0.3
+	Added experimental LeapPad Update/sshd enable
+	Added functions for determining device name, firmware version, dftp server version
+	Added functions to set firmware version, and dftp server version
+		  these are used to determine which firmware to upload, Explorer style or LeapPad
+	Formated help text better
+
+Version 0.2
+	General code clean up and simplification and continuity.
+	Fixed local.py/get_device_id to work with out the udev rule in Linux
+	Fixed local.py/get_mount_path added time out feature, to wait while mount point is being created
+	OpenLFConnect.py/get_abspath changed from path_format, and simplified greatly
+	OpenLFConnect.py/path_completion simplified the code
+	local.py/mounting in Linux it now searches /sys/class/ for the correct vendor, compares it to
+	   /proc/mount
+
+Version 0.1
+	Initial Commit

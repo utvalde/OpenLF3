@@ -1,0 +1,21 @@
+# Mount Didj
+# SCSI device accessible by user
+# Run Didj unlock command
+
+
+ATTRS{model}!="Didj", GOTO="mount_didj_end"
+
+SUBSYSTEM=="block", DRIVERS=="sd*", ACTION=="add", ATTRS{vendor}=="LeapFrog", ATTRS{model}=="Didj", MODE="666", NAME="leapfrog", RUN+="/usr/bin/sg_raw /dev/leapfrog C2 00 00 00 00 00 00 00 00 00"
+
+LABEL="mount_didj_end"
+
+
+
+# USB Boot Mode
+# SCSI device accessible by user
+
+ATTRS{model}=="Didj", GOTO="usb_boot_end"
+
+SUBSYSTEM=="block", DRIVERS=="sd*", ACTION=="add", ATTRS{vendor}=="Leap[Ff]*rog", MODE="666", NAME="leapfrog"
+
+LABEL="usb_boot_end"
