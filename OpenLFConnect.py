@@ -34,11 +34,7 @@
 import os
 import cmd
 import sys
-try:
-    import pyreadline as readline
-    from readline import Readline
-except ImportError:
-    from pyreadline import Readline
+import pyreadline as readline
 from pyreadline import Readline
 rl = Readline()
 
