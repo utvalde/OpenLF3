@@ -1,6 +1,6 @@
 #OpenLFConnect
-
-This is a port of OpenLFConnect for Python 3. It's currently not working. 
+**Note**
+This is a port of OpenLFConnect for Python 3. It's currently not working. The following is the readme of the original project.
 
 All the credit for this software goes to Jason Pruitt, the creator of OpenLFConnect. All I'm doing is running a few conversion commands and troubleshooting.
 
